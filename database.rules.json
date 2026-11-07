@@ -1,0 +1,30 @@
+{
+  "rules": {
+    "liveLocations": {
+      ".read": "auth != null && auth.token.role === 'admin'",
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.token.role === 'admin')",
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['name', 'latitude', 'longitude', 'updatedAt', 'expiresAt'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length <= 100"
+        },
+        "latitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
+        },
+        "longitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180"
+        },
+        "updatedAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now + 30000"
+        },
+        "expiresAt": {
+          ".validate": "newData.isNumber() && newData.val() > now && newData.val() <= now + 90000"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}

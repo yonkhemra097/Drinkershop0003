@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+html[data-font-size="small"] {
+  font-size: 14px;
+}
+
+html[data-font-size="normal"] {
+  font-size: 16px;
+}
+
+html[data-font-size="large"] {
+  font-size: 18px;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] body {
+  background-color: #171311;
+  color: #f5eee9;
+}
+
+html[data-theme="dark"] [class~="bg-white"],
+html[data-theme="dark"] [class~="bg-[#fcf9f3]"],
+html[data-theme="dark"] [class~="bg-[#f6f3ed]"],
+html[data-theme="dark"] [class~="bg-[#f0eee8]"] {
+  background-color: #282320 !important;
+}
+
+html[data-theme="dark"] [class~="bg-[#fff8f5]"] {
+  background-color: #332723 !important;
+}
+
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+  background-color: #282320;
+  color: #f5eee9;
+  border-color: #514742;
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] [class*="text-[#1c1c18]"],
+html[data-theme="dark"] [class*="text-[#130805]"],
+html[data-theme="dark"] [class*="text-[#4f4542]"] {
+  color: #f5eee9 !important;
+}
+
+html[data-theme="dark"] [class*="text-[#817471]"] {
+  color: #c4b7b1 !important;
+}
+
+html[data-theme="dark"] [class*="border-[#e5e2dc]"],
+html[data-theme="dark"] [class*="border-[#d2c3bf]"] {
+  border-color: #514742 !important;
+}
+
+html {
+  scroll-padding-top: 6rem;
+}
+
+input,
+textarea,
+select,
+button {
+  scroll-margin-block: 6rem;
+}
+
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+  min-height: 2.75rem;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 3px solid #ab3425;
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+.top-sellers-widget {
+  background-color: #fff !important;
+}
+
+.top-sellers-widget .top-seller-product-name,
+.top-sellers-widget .top-seller-revenue {
+  color: #1c1c18 !important;
+}
+
+.top-sellers-widget .top-seller-sold-count {
+  color: #5b514e !important;
+}
+
+html[data-theme="dark"] .top-sellers-widget {
+  background-color: #282320 !important;
+}
+
+html[data-theme="dark"] .top-sellers-widget .top-seller-product-name,
+html[data-theme="dark"] .top-sellers-widget .top-seller-revenue {
+  color: #f5eee9 !important;
+}
+
+html[data-theme="dark"] .top-sellers-widget .top-seller-sold-count {
+  color: #c4b7b1 !important;
+}

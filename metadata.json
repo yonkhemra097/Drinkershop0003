@@ -1,0 +1,6 @@
+{
+  "name": "Sip & Snack - Artisan Drinks, Gourmet Snacks & Drag-and-Drop Operations Portal",
+  "description": "Complete artisan food & beverage e-commerce platform with real-time drag-and-drop data visualization dashboard, multi-role operations management, and full data editing controls.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

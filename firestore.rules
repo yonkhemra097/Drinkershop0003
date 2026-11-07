@@ -1,0 +1,142 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function hasRole(roles) {
+      return signedIn() && request.auth.token.role in roles;
+    }
+
+    function isAdmin() {
+      return hasRole(['admin']);
+    }
+
+    function isManager() {
+      return hasRole(['admin', 'manager']);
+    }
+
+    function isOperationsStaff() {
+      return hasRole(['admin', 'manager', 'staff', 'driver']);
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if isManager();
+    }
+
+    match /productCosts/{productId} {
+      allow read, write: if isManager();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow create, update, delete: if isManager();
+    }
+
+    match /discounts/{discountId} {
+      allow read: if true;
+      allow create, update, delete: if isManager();
+    }
+
+    match /storeSettings/{settingsId} {
+      allow read: if true;
+      allow create, update, delete: if isManager();
+    }
+
+    match /orders/{orderId} {
+      allow read: if isOperationsStaff() ||
+        (signedIn() && resource.data.customerId == request.auth.uid);
+      allow create: if isManager();
+      allow update: if isManager() ||
+        (hasRole(['driver']) &&
+          resource.data.driverId == request.auth.uid &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['status', 'paymentStatus', 'updatedAt']) &&
+          (
+            (resource.data.status == 'Ready for Pickup' &&
+              request.resource.data.status == 'On the Way') ||
+            (resource.data.status == 'On the Way' &&
+              request.resource.data.status in ['Delivered', 'Failed'])
+          ) &&
+          (!request.resource.data.diff(resource.data).affectedKeys()
+              .hasAny(['paymentStatus']) ||
+            (request.resource.data.status == 'Delivered' &&
+              resource.data.paymentStatus == 'COD' &&
+              request.resource.data.paymentStatus == 'Paid'))) ||
+        (signedIn() &&
+          resource.data.customerId == request.auth.uid &&
+          resource.data.status == 'Pending' &&
+          request.resource.data.status == 'Cancelled' &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['status', 'updatedAt']));
+      allow delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isManager() || hasRole(['staff']) ||
+        (signedIn() && request.auth.uid == userId);
+      allow create: if isAdmin() ||
+        (signedIn() &&
+          request.auth.uid == userId &&
+          request.resource.data.id == userId &&
+          request.resource.data.role == 'customer');
+      allow update: if isAdmin() ||
+        (hasRole(['manager']) &&
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])) ||
+        (signedIn() &&
+          request.auth.uid == userId &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['name', 'phone', 'avatar']));
+      allow delete: if isAdmin();
+    }
+
+    match /stockRequests/{requestId} {
+      allow read: if signedIn();
+      allow write: if isManager();
+    }
+
+    match /inventoryLogs/{logId} {
+      allow read: if signedIn();
+      allow write: if isManager();
+    }
+
+    match /bottlenecks/{alertId} {
+      allow read: if signedIn();
+      allow write: if isManager();
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if isOperationsStaff() ||
+        (signedIn() && resource.data.category == 'announcement');
+      allow create: if isAdmin() ||
+        (hasRole(['manager']) && request.resource.data.category != 'announcement');
+      allow delete: if isAdmin();
+      allow update: if isManager() ||
+        (signedIn() &&
+          resource.data.category == 'announcement' &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readBy']) &&
+          request.resource.data.readBy.hasAll(resource.data.readBy) &&
+          request.resource.data.readBy.size() == resource.data.readBy.size() + 1 &&
+          request.resource.data.readBy.hasAny([request.auth.uid]));
+    }
+
+    match /_counters/{counterId} {
+      allow read, write: if false;
+    }
+
+    match /_rateLimits/{limitId} {
+      allow read, write: if false;
+    }
+
+    match /_system/{documentId} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
