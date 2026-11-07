@@ -1,9 +1,11 @@
-node_modules/
-build/
-dist/
-functions/lib/
-coverage/
-.DS_Store
-*.log
-.env*
+# Environment variables
+.env
+.env.*
 !.env.example
+
+# Firebase and service account credentials
+serviceAccountKey.json
+*service-account*.json
+
+# Dependencies
+node_modules/
